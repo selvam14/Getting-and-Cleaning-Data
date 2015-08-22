@@ -1,5 +1,5 @@
-#Step1. Merges the training and the test sets to create one data set.
-# setwd("~/Desktop/Getting and Cleaning Data/")
+#1.Training and test set are consolidated to create an output of one dataset
+#setwd("~/Desktop/Getting and Cleaning Data/")
 trainData <- read.table("./data/train/X_train.txt")
 dim(trainData) # 7352*561
 head(trainData)
@@ -17,9 +17,7 @@ joinLabel <- rbind(trainLabel, testLabel)
 dim(joinLabel) # 10299*1
 joinSubject <- rbind(trainSubject, testSubject)
 dim(joinSubject) # 10299*1
-
-# Step2. Extracts only the measurements on the mean and standard 
-# deviation for each measurement. 
+#2.Calculation of the mean and standard are pulled out 
 features <- read.table("./data/features.txt")
 dim(features)  # 561*2
 meanStdIndices <- grep("mean\\(\\)|std\\(\\)", features[, 2])
@@ -30,9 +28,6 @@ names(joinData) <- gsub("\\(\\)", "", features[meanStdIndices, 2]) # remove "()"
 names(joinData) <- gsub("mean", "Mean", names(joinData)) # capitalize M
 names(joinData) <- gsub("std", "Std", names(joinData)) # capitalize S
 names(joinData) <- gsub("-", "", names(joinData)) # remove "-" in column names 
-
-# Step3. Uses descriptive activity names to name the activities in 
-# the data set
 activity <- read.table("./data/activity_labels.txt")
 activity[, 2] <- tolower(gsub("_", "", activity[, 2]))
 substr(activity[2, 2], 8, 8) <- toupper(substr(activity[2, 2], 8, 8))
@@ -41,15 +36,11 @@ activityLabel <- activity[joinLabel[, 1], 2]
 joinLabel[, 1] <- activityLabel
 names(joinLabel) <- "activity"
 
-# Step4. Appropriately labels the data set with descriptive activity 
-# names. 
+#3.Data is labelled
 names(joinSubject) <- "subject"
 cleanedData <- cbind(joinSubject, joinLabel, joinData)
 dim(cleanedData) # 10299*68
 write.table(cleanedData, "merged_data.txt") # write out the 1st dataset
-
-# Step5. Creates a second, independent tidy data set with the average of 
-# each variable for each activity and each subject. 
 subjectLen <- length(table(joinSubject)) # 30
 activityLen <- dim(activity)[1] # 6
 columnLen <- dim(cleanedData)[2]
